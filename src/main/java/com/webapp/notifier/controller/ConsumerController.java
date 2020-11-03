@@ -56,7 +56,7 @@ public class ConsumerController {
             }else if(notification.getTime() < (new Date().getTime())) {
                 notification.setValue(data);
                 notification(notification,alertValue,value,operator);
-            }else {
+            }else if(!(notification.getStatus().equals("ALERT_IGNORED_THRESHOLD_REACHED"))){
                 notification.setStatus("ALERT_IGNORED_THRESHOLD_REACHED");
                 notification.setValue(data);
                 notificationService.save(notification);

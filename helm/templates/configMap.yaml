@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ .Values.configmap.name }}-{{ .Release.Name }}
+    namespace: {{ .Values.namespace.name }}
+    labels:
+     {{- include "notifier.labels" . | nindent 5 }}
+data:
+    RDS_CONNECTION_STRING: {{ .Values.configmap.RDS_CONNECTION_STRING }}
+    RDS_DB_NAME: {{ .Values.configmap.RDS_DB_NAME }}

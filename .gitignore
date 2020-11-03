@@ -12,6 +12,7 @@ buildNumber.properties
 .mvn
 mvnw.cmd
 /mvnw
+helm/myvalues.yaml
 
 
 ### STS ###
