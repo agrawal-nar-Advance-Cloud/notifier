@@ -21,7 +21,12 @@ spec:
     metadata:
       labels:
         {{- include "notifier.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/notifier'
+        prometheus.io/port: '9094'
     spec:
+      serviceAccountName: {{ include "notifier.serviceAccountName" . }}
       imagePullSecrets:
         - name: {{ .Values.secret.dockercred.name }}-{{ .Release.Name }}
       containers:
@@ -43,18 +48,18 @@ spec:
                   name: {{ .Values.secret.rdscred.name }}-{{ .Release.Name }}
                   key: password
           ports:
-            - name: notifier9093
-              containerPort: 9093
+            - name: notifier9094
+              containerPort: 9094
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
-              port: 9093
+              port: 9094
             initialDelaySeconds: 20
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /
-              port: 9093
+              port: 9094
             initialDelaySeconds: 20
             periodSeconds: 20
