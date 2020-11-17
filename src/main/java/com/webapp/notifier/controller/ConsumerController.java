@@ -8,6 +8,9 @@ import com.google.gson.JsonParser;
 import com.webapp.notifier.config.DoublyLinkedList;
 import com.webapp.notifier.model.Notification;
 import com.webapp.notifier.service.NotificationService;
+import io.prometheus.client.Counter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
@@ -26,8 +29,13 @@ public class ConsumerController {
     @Autowired
     DoublyLinkedList info;
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    static final Counter consumedCount = Counter.build().name("message_consumed_total_weather").labelNames("topic").help("Total message consumed on weather topic.").register();
+
     @KafkaListener(topics = "weather", groupId = "notifier", containerFactory = "weatherKafkaListenerFactory" )
     public void consumeJson(String weatherInfo) {
+        consumedCount.labels("weather").inc();
         info.addNode(weatherInfo);
         processData(info.getFirstNode());
     }
@@ -39,6 +47,7 @@ public class ConsumerController {
         JsonArray alertArray = jsonObject.getAsJsonArray("alerts");
         JsonObject weatherElement = jsonObject.getAsJsonObject("main");
 
+        log.info("Watch consumed, TOPIC:weather, WatchID:"+watchID);
 
         for (int i = 0; i < alertArray.size(); i++) {
 
