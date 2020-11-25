@@ -66,7 +66,7 @@ pipeline {
             steps{
                 script {
                     withKubeConfig([credentialsId: 'kubernetesCred',serverUrl: "${ServerUrl}"]) {
-                        sh "helm upgrade notifier ./helm/ -f ./helm/myvalues.yaml"
+                        sh "helm upgrade notifier -n api ./helm/ -f ./helm/myvalues.yaml"
                     }
                 }
             }
